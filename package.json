@@ -1,13 +1,11 @@
 {
   "name": "lab-test-1-chat-app",
   "version": "1.0.0",
-  "description": "Real-time chat application with Socket.io and MongoDB",
+  "description": "chat app lab test",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "node server.js"
   },
-  "keywords": ["chat", "socket.io", "express", "mongodb"],
   "author": "Pratik Pokhrel, 101487514",
   "license": "ISC",
   "dependencies": {

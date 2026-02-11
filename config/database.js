@@ -1,13 +1,7 @@
-/**
- * MongoDB connection config
- * Pratik Pokhrel, 101487514
- */
+var mongoose = require('mongoose');
 
-const mongoose = require('mongoose');
-
-const connectDB = async () => {
+var connectDB = async function() {
   try {
-    // Uses Atlas connection string from .env, or falls back to local MongoDB
     await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/chat_app');
     console.log('MongoDB connected successfully');
   } catch (error) {

@@ -1,38 +1,25 @@
-/**
- * Chat Application - Main Server
- * Pratik Pokhrel, 101487514
- * COMP 3133 - Lab Test 1
- */
+// Pratik Pokhrel 101487514 - COMP 3133 Lab Test 1
 
 require('dns').setServers(['8.8.8.8', '1.1.1.1']);
 
-const path = require('path');
+var path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
-const express = require('express');
-const http = require('http');
-const { Server } = require('socket.io');
-const cors = require('cors');
+var express = require('express');
+var http = require('http');
+var Server = require('socket.io').Server;
+var cors = require('cors');
 
-const connectDB = require('./config/database');
-const authRoutes = require('./routes/auth');
-const { router: roomRoutes, PREDEFINED_ROOMS } = require('./routes/rooms');
-const GroupMessage = require('./models/GroupMessage');
-const PrivateMessage = require('./models/PrivateMessage');
+var connectDB = require('./config/database');
+var authRoutes = require('./routes/auth');
+var roomStuff = require('./routes/rooms');
+var GroupMessage = require('./models/GroupMessage');
+var PrivateMessage = require('./models/PrivateMessage');
 
-const app = express();
-const server = http.createServer(app);
+var app = express();
+var server = http.createServer(app);
 
-// Session token - changes each time server restarts (clears old localStorage on client)
-const SERVER_SESSION = Date.now().toString(36) + Math.random().toString(36).slice(2);
-app.get('/api/server-session', (req, res) => {
-  res.json({ session: SERVER_SESSION });
-});
+var io = new Server(server, { cors: { origin: '*' } });
 
-const io = new Server(server, {
-  cors: { origin: '*' }
-});
-
-// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -41,11 +28,11 @@ app.use(express.static(path.join(__dirname, 'view')));
 
 // API Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/rooms', roomRoutes);
+app.use('/api/rooms', roomStuff.router);
 
 // Serve HTML pages
 app.get('/signup.html', (req, res) => {
-  res.redirect('/login.html');  // No signup - just Username + Room
+  res.sendFile(path.join(__dirname, 'view', 'signup.html'));
 });
 
 app.get('/login.html', (req, res) => {
@@ -66,7 +53,6 @@ const userSockets = new Map();
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
-  // Join room
   socket.on('join_room', async (data) => {
     const { username, room } = data;
     if (!username || !room) return;

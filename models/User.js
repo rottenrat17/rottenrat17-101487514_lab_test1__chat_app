@@ -1,8 +1,3 @@
-/**
- * User schema - stores account info (username must be unique per lab spec)
- * Pratik Pokhrel, 101487514
- */
-
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
@@ -46,16 +41,14 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-// Hash password before saving
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
-// Used during login to check if the password matches
-userSchema.methods.comparePassword = async function(candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.password);
+userSchema.methods.comparePassword = async function(pw) {
+  return await bcrypt.compare(pw, this.password);
 };
 
 module.exports = mongoose.model('User', userSchema);

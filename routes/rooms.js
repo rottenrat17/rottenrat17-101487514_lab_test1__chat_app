@@ -1,27 +1,10 @@
-/**
- * Room routes - predefined chat rooms
- * Pratik Pokhrel, 101487514
- */
+var express = require('express');
+var router = express.Router();
 
-const express = require('express');
-const router = express.Router();
+var rooms = ['devops', 'cloud computing', 'covid19', 'sports', 'nodeJS', 'general', 'web development', 'database'];
 
-// Rooms from the lab spec + a few extras
-const PREDEFINED_ROOMS = [
-  'News',
-  'devops',
-  'cloud computing',
-  'covid19',
-  'sports',
-  'nodeJS',
-  'general',
-  'web development',
-  'database'
-];
-
-// Get list of available rooms
-router.get('/', (req, res) => {
-  res.json({ success: true, rooms: PREDEFINED_ROOMS });
+router.get('/', function(req, res) {
+  res.json({ success: true, rooms: rooms });
 });
 
-module.exports = { router, PREDEFINED_ROOMS };
+module.exports = { router: router };
